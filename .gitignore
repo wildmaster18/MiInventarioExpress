@@ -1,0 +1,15 @@
+# Dependencias del proyecto (se instalan con npm install)
+node_modules/
+
+# Variables de entorno sensibles
+.env
+
+# Carpeta de imágenes subidas por usuarios (no se sube al repositorio)
+uploads/*
+
+# Archivo para mantener la carpeta uploads en git pero sin su contenido
+!uploads/.gitkeep
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
