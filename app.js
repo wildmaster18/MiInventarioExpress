@@ -9,6 +9,10 @@ const socketIo = require("socket.io");
 // Importa la conexión a la base de datos
 require("./config/db");
 
+// Importa los archivos de rutas del proyecto
+const rutasAuth = require("./routes/authRoutes");
+const rutasProductos = require("./routes/prodRoutes");
+
 // Crea la aplicación de Express y el servidor HTTP
 const app = express();
 const servidor = http.createServer(app);
@@ -25,23 +29,27 @@ app.engine(
     defaultLayout: "main",
     layoutsDir: path.join(__dirname, "views/layouts"),
     partialsDir: path.join(__dirname, "views/partials"),
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    },
   }),
 );
+
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 
-// Configura los middlewares de Express
-
+// Configura los middlewares globales de Express
 // Permite leer datos de formularios HTML enviados con POST
 app.use(express.urlencoded({ extended: true }));
 
-// Permite leer datos en formato JSON
+// Permite leer datos en formato JSON (para Postman u otras peticiones)
 app.use(express.json());
 
-// Sirve los archivos estáticos (CSS, JS del cliente, imágenes)
+// Sirve los archivos estáticos (CSS, JS del cliente)
 app.use(express.static(path.join(__dirname, "public")));
 
-// Sirve la carpeta de uploads para que las imágenes sean accesibles desde el navegador
+// Sirve la carpeta uploads para que las imágenes sean accesibles desde el navegador
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Configura el manejo de sesiones de usuario
@@ -54,25 +62,31 @@ app.use(
   }),
 );
 
-// Ruta de prueba para verificar que el servidor funciona
+// Registra las rutas del proyecto en Express
+app.use("/auth", rutasAuth);
+app.use("/productos", rutasProductos);
+
+// Ruta raíz: redirige según si hay sesión activa o no
 app.get("/", (req, res) => {
-  res.send(
-    "<h1>MiInventarioExpress funcionando correctamente</h1><p>Servidor listo en el puerto " +
-      puerto +
-      "</p>",
-  );
+  if (req.session && req.session.usuario) {
+    res.redirect("/productos");
+  } else {
+    res.redirect("/auth/login");
+  }
 });
 
 // Configura Socket.io para el chat en tiempo real
 io.on("connection", (socket) => {
-  // Registra en consola cada vez que un usuario se conecta
+  // Registra en consola cada vez que un usuario se conecta al chat
   console.log("Usuario conectado al chat:", socket.id);
 
   socket.on("disconnect", () => {
-    // Registra en consola cuando un usuario se desconecta
     console.log("Usuario desconectado:", socket.id);
   });
 });
+
+// Exporta io para usarlo en el módulo de chat del Commit 3
+module.exports = { io };
 
 // Inicia el servidor en el puerto definido
 servidor.listen(puerto, () => {

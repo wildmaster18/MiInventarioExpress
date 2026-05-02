@@ -1,0 +1,20 @@
+<!-- Muestra los errores de validación del formulario si los hay -->
+{{#if errores}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong><i class="bi bi-exclamation-triangle me-1"></i>Por favor corrige los siguientes errores:</strong>
+        <ul class="mb-0 mt-2">
+            {{#each errores}}
+                <li>{{this.msg}}</li>
+            {{/each}}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{{/if}}
+
+<!-- Muestra un error general (como credenciales incorrectas) -->
+{{#if error}}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-circle me-1"></i>{{error}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{{/if}}

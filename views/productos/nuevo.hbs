@@ -1,0 +1,87 @@
+<!-- Vista con el formulario para registrar un nuevo producto -->
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-plus-circle me-2"></i>Nuevo Producto
+                </h4>
+            </div>
+            <div class="card-body">
+
+                <!-- Incluye el parcial de errores de validación -->
+                {{> mensajeError}}
+
+                <!-- Formulario con enctype multipart para permitir subir imágenes -->
+                <form action="/productos" method="POST" enctype="multipart/form-data">
+
+                    <!-- Campo: Nombre del producto -->
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label fw-semibold">
+                            Nombre del producto <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               id="nombre"
+                               name="nombre"
+                               class="form-control"
+                               placeholder="Ej: Laptop Dell Inspiron"
+                               value="{{datos.nombre}}">
+                    </div>
+
+                    <!-- Campo: Precio -->
+                    <div class="mb-3">
+                        <label for="precio" class="form-label fw-semibold">
+                            Precio (USD) <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number"
+                                   id="precio"
+                                   name="precio"
+                                   class="form-control"
+                                   placeholder="0.00"
+                                   step="0.01"
+                                   min="0"
+                                   value="{{datos.precio}}">
+                        </div>
+                    </div>
+
+                    <!-- Campo: Descripción -->
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label fw-semibold">
+                            Descripción
+                        </label>
+                        <textarea id="descripcion"
+                                  name="descripcion"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Descripción opcional del producto">{{datos.descripcion}}</textarea>
+                    </div>
+
+                    <!-- Campo: Imagen del producto -->
+                    <div class="mb-4">
+                        <label for="imagen" class="form-label fw-semibold">
+                            Imagen del producto
+                        </label>
+                        <input type="file"
+                               id="imagen"
+                               name="imagen"
+                               class="form-control"
+                               accept="image/jpeg, image/png">
+                        <div class="form-text">Solo JPG o PNG, máximo 2 MB.</div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-save me-1"></i>Guardar producto
+                        </button>
+                        <a href="/productos" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

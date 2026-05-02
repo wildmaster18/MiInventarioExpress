@@ -4,7 +4,7 @@ node_modules/
 # Variables de entorno sensibles
 .env
 
-# Carpeta de imágenes subidas por usuarios (no se sube al repositorio)
+# Carpeta de imágenes subidas por usuarios
 uploads/*
 
 # Archivo para mantener la carpeta uploads en git pero sin su contenido
