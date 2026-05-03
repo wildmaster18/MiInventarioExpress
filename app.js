@@ -12,6 +12,7 @@ require("./config/db");
 // Importa los archivos de rutas del proyecto
 const rutasAuth = require("./routes/authRoutes");
 const rutasProductos = require("./routes/prodRoutes");
+const rutasChat = require("./routes/chatRoutes");
 
 // Crea la aplicación de Express y el servidor HTTP
 const app = express();
@@ -65,6 +66,7 @@ app.use(
 // Registra las rutas del proyecto en Express
 app.use("/auth", rutasAuth);
 app.use("/productos", rutasProductos);
+app.use("/chat", rutasChat);
 
 // Ruta raíz: redirige según si hay sesión activa o no
 app.get("/", (req, res) => {
@@ -77,16 +79,46 @@ app.get("/", (req, res) => {
 
 // Configura Socket.io para el chat en tiempo real
 io.on("connection", (socket) => {
-  // Registra en consola cada vez que un usuario se conecta al chat
-  console.log("Usuario conectado al chat:", socket.id);
+  console.log("Nueva conexión al chat:", socket.id);
 
+  // Recibe el nombre del usuario al conectarse y lo guarda en el socket
+  socket.on("usuarioConectado", (nomUsu) => {
+    socket.nomUsu = nomUsu;
+    // Notifica a todos los usuarios conectados que alguien entró al chat
+    io.emit("mensajeSistema", nomUsu + " se ha unido al chat");
+    console.log(nomUsu + " entró al chat");
+  });
+
+  // Recibe un mensaje y lo retransmite a todos los usuarios conectados
+  socket.on("chatMensaje", (mensaje) => {
+    // Construye el objeto con los datos del mensaje para enviarlo
+    var datosMensaje = {
+      nomUsu: socket.nomUsu || "Anónimo",
+      mensaje: mensaje,
+      // Formatea la hora en HH:MM para mostrarla junto al mensaje
+      hora: new Date().toLocaleTimeString("es-EC", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+    // Emite el mensaje a todos los usuarios conectados, incluido el emisor
+    io.emit("chatMensaje", datosMensaje);
+  });
+
+  // Notifica a todos cuando un usuario se desconecta
   socket.on("disconnect", () => {
-    console.log("Usuario desconectado:", socket.id);
+    if (socket.nomUsu) {
+      io.emit("mensajeSistema", socket.nomUsu + " ha salido del chat");
+      console.log(socket.nomUsu + " salió del chat");
+    }
   });
 });
 
-// Exporta io para usarlo en el módulo de chat del Commit 3
-module.exports = { io };
+// Captura errores no manejados en las rutas y responde con status 500
+app.use((err, req, res, next) => {
+  console.error("Error no controlado:", err.message);
+  res.status(500).send("Error interno del servidor: " + err.message);
+});
 
 // Inicia el servidor en el puerto definido
 servidor.listen(puerto, () => {

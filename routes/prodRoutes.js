@@ -23,20 +23,31 @@ const validarProducto = [
         .isFloat({ min: 0 }).withMessage('El precio debe ser un número mayor o igual a 0')
 ];
 
+// Captura los errores de Multer (tipo no permitido o archivo muy grande)
+// y los guarda en req.errorImagen para que el controlador los muestre en la vista
+function procesarImagen(req, res, next) {
+    subirImagen.single('imagen')(req, res, (err) => {
+        if (err) {
+            req.errorImagen = err.message;
+        }
+        next();
+    });
+}
+
 // Muestra la lista de todos los productos (requiere sesión activa)
 router.get('/', verificarSesion, listarProductos);
 
 // Muestra el formulario para crear un producto nuevo
 router.get('/nuevo', verificarSesion, mostrarFormNuevo);
 
-// Procesa el formulario de creación: primero sube la imagen, luego valida y guarda
-router.post('/', verificarSesion, subirImagen.single('imagen'), validarProducto, crearProducto);
+// Procesa el formulario de creación: primero procesa imagen (con manejo de error), luego valida y guarda
+router.post('/', verificarSesion, procesarImagen, validarProducto, crearProducto);
 
 // Muestra el formulario de edición con los datos del producto seleccionado
 router.get('/editar/:id', verificarSesion, mostrarFormEditar);
 
 // Procesa el formulario de edición: actualiza imagen si se subió una nueva
-router.post('/editar/:id', verificarSesion, subirImagen.single('imagen'), validarProducto, actualizarProducto);
+router.post('/editar/:id', verificarSesion, procesarImagen, validarProducto, actualizarProducto);
 
 // Elimina el producto indicado por su ID
 router.post('/eliminar/:id', verificarSesion, eliminarProducto);

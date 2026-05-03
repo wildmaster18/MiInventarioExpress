@@ -1,6 +1,5 @@
-// Importa multer y path para configurar la carga de archivos
+// Importa multer para configurar la carga de archivos
 const multer = require('multer');
-const path = require('path');
 
 // Configura el almacenamiento en disco: carpeta destino y nombre del archivo
 const almacenamiento = multer.diskStorage({

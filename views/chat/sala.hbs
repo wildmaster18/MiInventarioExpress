@@ -1,0 +1,60 @@
+<!-- Vista de la sala de chat en tiempo real -->
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7">
+        <div class="card shadow">
+
+            <!-- Encabezado de la sala con indicador de conexión -->
+            <div class="card-header bg-dark text-white d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">
+                    <i class="bi bi-chat-dots-fill me-2"></i>Chat en tiempo real
+                </h5>
+                <span class="badge bg-success" id="estadoConexion">
+                    <i class="bi bi-circle-fill me-1" style="font-size: 0.6rem;"></i>Conectado
+                </span>
+            </div>
+
+            <!-- Área donde se muestran los mensajes -->
+            <div class="card-body p-0">
+                <div id="cajaMensajes" class="p-3" style="height: 420px; overflow-y: auto; background-color: #f8f9fa;">
+                    <!-- Los mensajes se insertan aquí con JavaScript -->
+                    <p class="text-center text-muted small mt-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Estás conectado como <strong>{{usuario.nomUsu}}</strong>. Los mensajes son visibles para todos los usuarios conectados.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Pie de la tarjeta con el campo de entrada del mensaje -->
+            <div class="card-footer bg-white py-3">
+                <div class="input-group">
+                    <input type="text"
+                           id="inpMensaje"
+                           class="form-control"
+                           placeholder="Escribe un mensaje..."
+                           maxlength="200"
+                           autocomplete="off">
+                    <button id="btnEnviar" class="btn btn-primary px-4">
+                        <i class="bi bi-send me-1"></i>Enviar
+                    </button>
+                </div>
+                <div class="form-text mt-1">
+                    Presiona <kbd>Enter</kbd> o haz clic en Enviar. Máximo 200 caracteres.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+    Pasa el nombre del usuario desde el servidor hacia el JavaScript del cliente.
+    Se usa una variable global para que chat.js pueda acceder a ella.
+-->
+<script>
+    var nomUsuActual = "{{usuario.nomUsu}}";
+</script>
+
+<!-- Socket.io se sirve automáticamente en esta ruta por el servidor Node.js -->
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- Lógica del chat del lado del cliente -->
+<script src="/js/chat.js"></script>
